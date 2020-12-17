@@ -3,7 +3,15 @@ import { ValidationError, InvalidCredentialsError, DatabaseInsertError } from '.
 import { errorMessages } from '../utils/error-messages'
 import { databaseErrors } from '../utils/database-error-codes'
 import UserRepository from './user-repository'
-import { Hash, RequestData, User } from '../utils/interfaces'
+import { RequestData, User } from '../utils/interfaces'
+import Hash from '../utils/hash'
+
+interface UserDetails {
+  success: boolean,
+  name: string,
+  id: string
+}
+
 export default class UserService {
   userRepository: UserRepository
   validator: Hash
@@ -12,13 +20,13 @@ export default class UserService {
     this.validator = validator
   }
 
-  async authenticate(request: RequestData): Promise<string> {
+  async login(request: RequestData): Promise<string> {
     const { error, value } = userAuthenticationSchema.validate(request.body)
     if (error) {
         throw new ValidationError(error)
       }
     try {
-      const user = await this.userRepository.getUserByEmail(value.email)
+      const user = await this.userRepository.findUserByEmail(value.email)
       if (!user){
         throw new InvalidCredentialsError("Please check your email and password")
       } 
@@ -26,7 +34,7 @@ export default class UserService {
       if (!isValidated) {
         throw new InvalidCredentialsError("Please check your email and password")
       } 
-      const response = this.setUserLoginDetails(user)
+      const response = this.setUserDetails({name: user.name, id: user._id, success: true})
       return JSON.stringify(response)
     } catch (err) {
       throw new InvalidCredentialsError("Please check your email and password")
@@ -54,7 +62,6 @@ export default class UserService {
     }
   }
 
-
   setUserData(value: User, hashedPassword: string): User{
     return {
       name: value.name,
@@ -64,11 +71,11 @@ export default class UserService {
     }
   }
 
-  setUserLoginDetails(userData) {
+  setUserDetails(userData: UserDetails): UserDetails {
     return {
-      success:true,
+      success:userData.success,
       name: userData.name,
-      id: userData._id
+      id: userData.id
     }
   }
 
