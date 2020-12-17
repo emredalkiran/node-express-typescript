@@ -1,7 +1,6 @@
 import express from 'express'
 import BaseController from '../base-classes/base-controller'
-//import getRequestData from '../utils/get-request-data'
-//import { httpHeader, statusCode } from '../utils/http-header'
+import { httpHeader, statusCode } from '../utils/http-header'
 import UserService from './user-service'
 
 export default class UserController extends BaseController {
@@ -10,25 +9,11 @@ export default class UserController extends BaseController {
     super()
     this.userService = userService
   }
-  async login(req: express.Request, res:express.Response): Promi {
-    const reqDate = this.getRequestData(req)
+  async login(req: express.Request, res:express.Response): Promise<void>{
+    const reqData = this.getRequestData(req)
     try {
-      const response = await this.service.
-    }
-  }
-  async signup(req: express.Request, res:express.Response) {
-
-  }
-
-}
-const userRouter = express.Router()
-
-userRouter.post('/login', async (req, res)=> {
-  console.log("POST /login")
-  const request = getRequestData(req)
-  try {
-    const response = await userService.authenticate(request)
-    res
+      const response = await this.userService.login(reqData)
+      res
       .set(httpHeader.json)
       .status(statusCode.success)
       .send(response)
@@ -42,29 +27,27 @@ userRouter.post('/login', async (req, res)=> {
       error: err.errorMessage
      }
     })
+   }
   }
-})
 
-userRouter.post('/signup', async (req, res)=> {
-  console.log("POST /signup")
-  const request = getRequestData(req)
-  try {
-    const response = await userService.addUser(request)
-    res
-      .set(httpHeader.json)
-      .status(statusCode.success)
-      .send(response)
-  } catch(err) {
+  async signup(req: express.Request, res:express.Response): Promise<void> {
+    const reqData = this.getRequestData(req)
+    try {
+      const response = await this.userService.addUser(reqData)
       res
         .set(httpHeader.json)
-        .status(statusCode.badRequest)
-        .send({
-          response: {
-          success: false,
-          error: err.errorMessage
-        }
-    })
+        .status(statusCode.success)
+        .send(response)
+    } catch(err) {
+        res
+          .set(httpHeader.json)
+          .status(statusCode.badRequest)
+          .send({
+            response: {
+            success: false,
+            error: err.errorMessage
+          }
+      })
+    }
   }
-})
-
-module.exports = userRouter
+}
