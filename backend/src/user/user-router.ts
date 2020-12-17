@@ -2,7 +2,6 @@
 import UserController from './user-controller'
 import express from 'express'
 import { Router } from '../base-classes/interfaces'
-import { Server } from 'mongodb'
 import ServiceContainer from '../service-container'
 
 export class UserRouter implements Router {
