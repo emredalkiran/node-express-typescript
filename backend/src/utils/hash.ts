@@ -1,5 +1,10 @@
-import { Hash } from './interfaces'
 import bcrypt from 'bcrypt'
+
+
+export interface Hash {
+  hash(password: string): Promise<string>
+  validate(password: string, hashedPassword: string): Promise<boolean>
+}
 
 export default class HashHelper implements Hash {
   hash(password: string): Promise<string> {
