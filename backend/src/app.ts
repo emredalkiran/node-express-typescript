@@ -6,6 +6,7 @@ import userController from './user/user-controller'
 import bodyParser from 'body-parser'
 import cors from 'cors'
 import ServiceContainer from './service-container'
+import { UserRouter } from './user/user-router'
 
 export class App {
   instance: express.Application
@@ -13,19 +14,12 @@ export class App {
   constructor() {
     this.instance = express()
   }
-  private setRoutes(): void {
-    //app.use('/api/v1/user', userController)
-    //app.use(/^\/api\/v1\/[a-zA-Z0-9_.-]*$/, quizController)
-    this.instance.get('/', (req, res) => {
-      console.log("Request received")
-      res.send('Homepage')
-    })
-    this.instance.post('/', (req, res) => {
-      console.log(req.body)
-      res.send('Hello')
-    })
+
+  private setRoutes(serviceContainer: ServiceContainer): void {
+   const userRouter = new UserRouter(this.instance, serviceContainer)
   }
-  configureApp(): void {
+  
+  configureApp(serviceContainer: ServiceContainer): void {
     this.instance.use(helmet())
     this.instance.use(bodyParser.urlencoded({ extended: true }))
     this.instance.use(bodyParser.json())
@@ -39,7 +33,7 @@ export class App {
           winston.format.json()
       )
     }))
-    this.setRoutes()
+    this.setRoutes(serviceContainer)
     this.instance.use(expressWinston.errorLogger({
       transports: [
           new winston.transports.Console()
