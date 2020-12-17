@@ -1,4 +1,3 @@
-import BaseRepository from '../base-classes/base-repository'
 import { User } from '../utils/interfaces'
 import { Db } from 'mongodb'
 export default class UserRepository {
@@ -6,20 +5,15 @@ export default class UserRepository {
   constructor(db: Db) {
     this.db = db
   }
-  addUser(user: User) {
-    return this.db.collection('users').insertOne(quiz)
-  }
-
-  getUserByEmail(email: string) {
-    return this.db.collection('users').findOne({ email: email })
+  addUser(user: User): Promise<any>{
+    return this.db.collection('users').insertOne(user)
   }
   
-  findUserByID(id: string) {
+  findUserByID(id: string): Promise<any> {
     return this.db.collection('users').findOne({ _id: id })
   }
 
-  findUserByEmail(email: string) {
+  findUserByEmail(email: string): Promise<any> {
     return this.db.collection('users').findOne({ email: email })
   }
-
 }
