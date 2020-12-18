@@ -1,4 +1,3 @@
-
 import UserController from './user-controller'
 import express from 'express'
 import { Router } from '../base-classes/interfaces'
@@ -14,7 +13,7 @@ export class UserRouter implements Router {
     this.setRoutes()
   }
   setRoutes() {
-    this.app.post('/login', this.userController.login)
-    this.app.post('/signup', this.userController.signup)
+    this.app.post('/login', (req: express.Request, res: express.Response) => this.userController.login(req, res))
+    this.app.post('/signup', (req: express.Request, res: express.Response) => this.userController.signup(req, res))
   }
 }
