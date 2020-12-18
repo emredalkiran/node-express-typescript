@@ -22,6 +22,6 @@ async function init() {
   } catch (err) {
     console.log(err)
   }
-  }
+}
 
 init()
