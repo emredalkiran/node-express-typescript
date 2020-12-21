@@ -23,8 +23,8 @@ export default class UserController extends BaseController {
     .status(statusCode.unauthorized)
     .send({
       response: {
-      success: false,
-      error: err.errorMessage
+        success: false,
+        error: err.errorMessage
      }
     })
    }

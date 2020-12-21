@@ -1,5 +1,5 @@
-import express from 'express'
-import Authenticator from '../auth/auth'
+import { Session } from 'express-session'
+
 export interface User {
   name: string,
   lastName: string,
@@ -14,6 +14,7 @@ export interface UserAuthenticationRequest {
 
 export interface RequestData {
   body: object,
-  queryParams: object
+  queryParams: object,
+  sessionId?: string,
+  session: Session
 }
-

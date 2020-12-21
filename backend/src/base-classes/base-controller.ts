@@ -5,7 +5,9 @@ export default abstract class BaseController {
   getRequestData(req: express.Request): RequestData {
     return {
       body:req.body,
-      queryParams: req.query
+      queryParams: req.query,
+      sessionId: req.sessionID,
+      session: req.session
     }
   }
 }
