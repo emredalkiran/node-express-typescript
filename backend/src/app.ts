@@ -9,8 +9,8 @@ import ServiceContainer from './service-container'
 import { v4 as uuidv4 } from 'uuid'
 import redis from 'redis'
 import connectRedis from 'connect-redis'
-
 import { UserRouter } from './user/user-router'
+import { SessionOptions } from 'express-session'
 
 export class App {
   instance: express.Application
@@ -26,7 +26,8 @@ export class App {
   configureApp(serviceContainer: ServiceContainer): void {
     const RedisStore = connectRedis(session)
     const redisClient = redis.createClient()
-    const sessionOptions = {
+  
+    const sessionOptions: SessionOptions = {
       genid: () => uuidv4(),
       store: new RedisStore({ client:redisClient }),
       secret: 'hard to guess super secret', //Do not hardcode this secret. Can be read from env variables
@@ -34,10 +35,10 @@ export class App {
       cookie: {
         secure: process.env.NODE_ENV === 'development' ? false : true,
         sameSite: true,
-        httpOnly: true
+        httpOnly: true,
+        maxAge: 3600000,
       },
-      maxAge: 3600000,// 1 hour
-      saveUninitialized: true
+      saveUninitialized: false,
     }
 
     this.instance.use(helmet())
