@@ -24,21 +24,14 @@ export default class UserService {
     const { error, value } = userAuthenticationSchema.validate(request.body)
     if (error) {
         throw new ValidationError(error)
-      }
-    try {
-      const user = await this.userRepository.findUserByEmail(value.email)
-      if (!user){
-        throw new InvalidCredentialsError("Please check your email and password")
-      } 
-      const isValidated = await this.validator.validate(value.password, user.hashedPassword)
-      if (!isValidated) {
-        throw new InvalidCredentialsError("Please check your email and password")
-      } 
-      const response = this.setUserDetails({name: user.name, id: user._id, success: true})
-      return JSON.stringify(response)
-    } catch (err) {
+    }
+    const user = await this.userRepository.findUserByEmail(value.email)
+    if (!user || !await this.validator.validate(value.password, user.hashedPassword)) {
       throw new InvalidCredentialsError("Please check your email and password")
     }
+    const response = this.setUserDetails({name: user.name, id: user._id, success: true})
+    request.session.userId = response.id
+    return JSON.stringify(response)
   }
 
   async addUser(request: RequestData): Promise<string>{
@@ -47,10 +40,11 @@ export default class UserService {
       throw new ValidationError(error)
     }
     const hashedPassword = await this.validator.hash(value.password)
-    const userData = this.setUserData(value, hashedPassword)
+    const userData = this.setUserData({...value, hashedPassword})
     try {
       const queryResult = await this.userRepository.addUser(userData)
       const result = { success: 'true', id: queryResult.insertedId, name: userData.name }
+      request.session.userId = result.id
       return JSON.stringify(result)
     } catch (err) {
       if (err.code === databaseErrors.DUPLICATE_KEY) {
@@ -62,12 +56,12 @@ export default class UserService {
     }
   }
 
-  setUserData(value: User, hashedPassword: string): User{
+  setUserData(value: User): User {
     return {
       name: value.name,
       lastName: value.lastName,
       email: value.email,
-      hashedPassword: hashedPassword
+      hashedPassword: value.hashedPassword
     }
   }
 
