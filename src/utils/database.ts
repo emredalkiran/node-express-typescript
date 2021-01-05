@@ -3,6 +3,7 @@ import { MongoClient, Db } from 'mongodb'
 interface DatabaseConnection {
   connect(connectionURL: string, dbName: string, options?: object): Promise<any>
 }
+
 export default class MongoConnection implements DatabaseConnection {
 
   private options = {

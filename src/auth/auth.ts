@@ -6,4 +6,8 @@ userRepository: UserRepository
 constructor(userRepository: UserRepository) {
   this.userRepository = userRepository
 }
+
+authenticate() {
+  
+}
 }
