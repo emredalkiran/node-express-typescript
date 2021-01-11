@@ -1,2 +1,2 @@
-# store-finder
-A SaaS solution to provide store locator widget to any web based application
+# node-express-typescript
+A boilerplate project template to build API servers using Node.js, Express.js and MongoDB with TypeScript and session based authentication.
