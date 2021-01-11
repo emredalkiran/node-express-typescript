@@ -29,8 +29,8 @@ export class App {
   
     const sessionOptions: SessionOptions = {
       genid: () => uuidv4(),
-      store: new RedisStore({ client:redisClient }),
-      secret: 'hard to guess super secret', //Do not hardcode this secret. Can be read from env variables
+      store: new RedisStore({ client: redisClient }),
+      secret: 'hard to guess super secret', //Do not hardcode this secret. You can read it from env variables
       resave: false,
       cookie: {
         secure: process.env.NODE_ENV === 'development' ? false : true,
